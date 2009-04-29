@@ -41,7 +41,6 @@ module Jekyll
               RDiscount.new(content).to_html
             end
 
-            puts 'Using rdiscount for Markdown'
           rescue LoadError
             puts 'You must have the rdiscount gem installed first'
           end
@@ -130,12 +129,13 @@ module Jekyll
         end
       end
 
+      self.posts.sort!
+
       # second pass renders each post now that full site payload is available
       self.posts.each do |post|
         post.render(self.layouts, site_payload)
       end
 
-      self.posts.sort!
       self.categories.values.map { |cats| cats.sort! { |a, b| b <=> a} }
     rescue Errno::ENOENT => e
       # ignore missing layout dir
