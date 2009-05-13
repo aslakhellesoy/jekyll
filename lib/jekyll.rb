@@ -12,11 +12,11 @@ require 'yaml'
 
 # 3rd party
 require 'liquid'
-gem 'RedCloth', '= 4.1.0'
 require 'redcloth'
 
 # internal requires
 require 'jekyll/core_ext'
+require 'jekyll/pager'
 require 'jekyll/site'
 require 'jekyll/convertible'
 require 'jekyll/layout'
