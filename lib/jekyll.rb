@@ -16,6 +16,7 @@ require 'redcloth'
 
 # internal requires
 require 'jekyll/core_ext'
+require 'jekyll/pager'
 require 'jekyll/site'
 require 'jekyll/convertible'
 require 'jekyll/layout'
@@ -27,7 +28,7 @@ require 'jekyll/tags/include'
 require 'jekyll/albino'
 
 module Jekyll
-  # Default options. Overriden by values in _config.yaml or command-line opts.
+  # Default options. Overriden by values in _config.yml or command-line opts.
   # (Strings rather symbols used for compatability with YAML)
   DEFAULTS = {
     'auto'         => false,
@@ -61,15 +62,16 @@ module Jekyll
     # then, we need to know where to look for _config.yml
     source = override['source'] || Jekyll::DEFAULTS['source']
 
-    # Get configuration from <source>/_config.yaml
-    config = {}
+    # Get configuration from <source>/_config.yml
     config_file = File.join(source, '_config.yml')
     begin
       config = YAML.load_file(config_file)
-      puts "Configuration from #{config_file}"
+      raise "Invalid configuration - #{config_file}" if !config.is_a?(Hash)
+      STDOUT.puts "Configuration from #{config_file}"
     rescue => err
-      puts "WARNING: Could not read configuration. Using defaults (and options)."
-      puts "\t" + err
+      STDERR.puts "WARNING: Could not read configuration. Using defaults (and options)."
+      STDERR.puts "\t" + err.to_s
+      config = {}
     end
 
     # Merge DEFAULTS < _config.yml < override

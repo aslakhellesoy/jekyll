@@ -10,7 +10,7 @@ Basic Command Line Usage:
   jekyll <path to write generated site>                    # . -> <path>
   jekyll <path to source> <path to write generated site>   # <path> -> <path>
 
-  Configuration is read from '<source>/_config.yaml' but can be overriden
+  Configuration is read from '<source>/_config.yml' but can be overriden
   using the following options:
 
 HELP
@@ -57,6 +57,16 @@ opts = OptionParser.new do |opts|
 
   opts.on("--permalink [TYPE]", "Use 'date' (default) for YYYY/MM/DD") do |style|
     options['permalink'] = style unless style.nil?
+  end
+  
+  opts.on("--paginate [POSTS_PER_PAGE]", "Paginate a blog's posts") do |per_page|
+    begin
+      options['paginate'] = per_page.to_i
+      raise ArgumentError if options['paginate'] == 0
+    rescue
+      puts 'you must specify a number of posts by page bigger than 0'
+      exit 0
+    end
   end
 
   opts.on("--version", "Display current version") do
