@@ -1,8 +1,10 @@
 module Jekyll
 
   class Site
-    attr_accessor :config, :layouts, :posts, :categories, :exclude,
-                  :source, :dest, :lsi, :pygments, :permalink_style, :tags
+
+    attr_accessor :config, :layouts, :posts, :categories, :exclude, :liquid_tags
+    attr_accessor :source, :dest, :lsi, :pygments, :permalink_style, :tags
+
 
     # Initialize the site
     #   +config+ is a Hash containing site configurations details
@@ -16,7 +18,8 @@ module Jekyll
       self.lsi             = config['lsi']
       self.pygments        = config['pygments']
       self.permalink_style = config['permalink'].to_sym
-      self.exclude         = config['exclude'] || []
+      self.exclude         = config['exclude'] || []      
+      self.liquid_tags     = config['liquid_tags']
 
       self.reset
       self.setup
@@ -79,6 +82,18 @@ module Jekyll
           end
         else
           raise "Invalid Markdown processor: '#{self.config['markdown']}' -- did you mean 'maruku' or 'rdiscount'?"
+      end
+      
+      # Load the external tags if set to true
+      load_tags if self.liquid_tags 
+    end
+    
+    def load_tags()
+      base = File.join(self.source, '_liquid_tags')
+      if File.directory?(base)
+        Dir.chdir(base) do
+          Dir['*.rb'].each {|file| require file}
+        end
       end
     end
 

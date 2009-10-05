@@ -66,6 +66,7 @@ class TestSite < Test::Unit::TestCase
       assert_equal includes, @site.filter_entries(excludes + includes)
     end
     
+
     context 'with an invalid markdown processor in the configuration' do
       
       should 'give a meaningful error message' do
@@ -81,5 +82,21 @@ class TestSite < Test::Unit::TestCase
       
     end
     
+
+    should "not load external liquid tags by default" do
+      assert_equal false, Liquid::Template.tags.include?('test')
+    end
+    
+    should "load external liquid tags" do
+      stub(Jekyll).configuration do
+        Jekyll::DEFAULTS.merge({'source' => source_dir, 'destination' => dest_dir, 'liquid_tags' => true})
+      end
+      site = Site.new(Jekyll.configuration)
+      assert_equal true, Liquid::Template.tags.include?('test')
+      if Liquid::Template.tags.include?('test')
+        Liquid::Template.tags.delete('test')
+      end
+    end
+
   end
 end

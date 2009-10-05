@@ -1,15 +1,9 @@
+require 'include'
+
 module Jekyll
 
-  class IncludeTag < Liquid::Tag
-    def initialize(tag_name, file, tokens)
-      super
-      @file = file.strip
-    end
-    
-    def check_file(file)
-      return @file !~ /^[a-zA-Z0-9_\/\.-]+$/ || @file =~ /\.\// || @file =~ /\/\./
-    end
-    
+  class TextileIncludeTag < IncludeTag
+
     def render(context)
       if check_file(@file)
         return "Include file '#{@file}' contains invalid characters or sequences"
@@ -19,7 +13,8 @@ module Jekyll
         choices = Dir['**/*'].reject { |x| File.symlink?(x) }
         if choices.include?(@file)
           source = File.read(@file)
-          partial = Liquid::Template.parse(source)
+          html = RedCloth.new(source).to_html
+          partial = Liquid::Template.parse(html)
           context.stack do
             partial.render(context)
           end
@@ -29,7 +24,7 @@ module Jekyll
       end
     end
   end
-
+  
 end
 
-Liquid::Template.register_tag('include', Jekyll::IncludeTag)
+Liquid::Template.register_tag('textile', Jekyll::TextileIncludeTag)

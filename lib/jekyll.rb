@@ -49,7 +49,9 @@ module Jekyll
       'png_engine' => 'blahtex',
       'png_dir'    => 'images/latex',
       'png_url'    => '/images/latex'
-    }
+    },
+    
+    'liquid_tags'         => false
   }
 
   # Generate a Jekyll configuration Hash by merging the default options
