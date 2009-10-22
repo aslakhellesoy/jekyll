@@ -51,7 +51,7 @@ module Jekyll
       'png_url'    => '/images/latex'
     },
     
-    'liquid_tags'         => false
+    'secure'       => true
   }
 
   # Generate a Jekyll configuration Hash by merging the default options

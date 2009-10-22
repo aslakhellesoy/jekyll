@@ -81,20 +81,21 @@ class TestSite < Test::Unit::TestCase
       end
       
     end
-    
 
-    should "not load external liquid tags by default" do
-      assert_equal false, Liquid::Template.tags.include?('test')
-    end
-    
-    should "load external liquid tags" do
-      stub(Jekyll).configuration do
-        Jekyll::DEFAULTS.merge({'source' => source_dir, 'destination' => dest_dir, 'liquid_tags' => true})
+    context "with the secure flag set" do
+      
+      should "load external liquid tags" do
+        site = Site.new(Jekyll.configuration.merge({'secure' => false}))
+        assert_equal true, Liquid::Template.tags.include?('test')
+        if Liquid::Template.tags.include?('test')
+          Liquid::Template.tags.delete('test')
+          assert_equal false, Liquid::Template.tags.include?('test')
+        end
       end
-      site = Site.new(Jekyll.configuration)
-      assert_equal true, Liquid::Template.tags.include?('test')
-      if Liquid::Template.tags.include?('test')
-        Liquid::Template.tags.delete('test')
+
+      should "not load external liquid tags by default" do
+        site = Site.new(Jekyll.configuration.merge({'secure' => true}))
+        assert_equal false, Liquid::Template.tags.include?('test')
       end
     end
 

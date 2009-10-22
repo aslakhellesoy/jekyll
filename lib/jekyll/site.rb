@@ -2,7 +2,7 @@ module Jekyll
 
   class Site
 
-    attr_accessor :config, :layouts, :posts, :categories, :exclude, :liquid_tags
+    attr_accessor :config, :layouts, :posts, :categories, :exclude, :secure
     attr_accessor :source, :dest, :lsi, :pygments, :permalink_style, :tags
 
 
@@ -19,7 +19,7 @@ module Jekyll
       self.pygments        = config['pygments']
       self.permalink_style = config['permalink'].to_sym
       self.exclude         = config['exclude'] || []      
-      self.liquid_tags     = config['liquid_tags']
+      self.secure          = config['secure']
 
       self.reset
       self.setup
@@ -84,15 +84,19 @@ module Jekyll
           raise "Invalid Markdown processor: '#{self.config['markdown']}' -- did you mean 'maruku' or 'rdiscount'?"
       end
       
-      # Load the external tags if set to true
-      load_tags if self.liquid_tags 
+      if self.secure
+        # Add secure only calls here?
+      else
+        # Load the external tags if we're not in secure mode
+        self.load_insecure_liquid_tags
+      end
     end
     
-    def load_tags()
+    def load_insecure_liquid_tags()
       base = File.join(self.source, '_liquid_tags')
       if File.directory?(base)
         Dir.chdir(base) do
-          Dir['*.rb'].each {|file| require file}
+          Dir['*.rb'].each { |file| load file unless require file }
         end
       end
     end
