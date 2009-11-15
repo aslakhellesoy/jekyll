@@ -85,6 +85,8 @@ class Albino
 
   def convert_options(options = {})
     @options.merge(options).inject('') do |string, (flag, value)|
+      value = "c#" if value == "cs" # Because Liquid strips away the '#' character
+      value = "text" if value == "ik" # Not supported yet
       string + " -#{flag} #{value}"
     end
   end
