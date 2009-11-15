@@ -41,7 +41,12 @@
 # Chris Wanstrath // chris@ozmm.org
 #         GitHub // http://github.com
 #
-require 'open4'
+begin
+  require 'open4'
+rescue LoadError
+  require 'rubygems'
+  require 'open4'
+end
 
 class Albino
   @@bin = Rails.development? ? 'pygmentize' : '/usr/bin/pygmentize' rescue 'pygmentize'
@@ -73,7 +78,8 @@ class Albino
   def colorize(options = {})
     html = execute(@@bin + convert_options(options))
     # Work around an RDiscount bug: http://gist.github.com/97682
-    html.to_s.sub(%r{</pre></div>\Z}, "</pre>\n</div>")
+    html = html.to_s.sub(%r{</pre></div>\Z}, "</pre>\n</div>")
+    html.to_s.sub(%r{class="highlight"}, %{class="highlight #{@options[:l]}"})
   end
   alias_method :to_s, :colorize
 
@@ -97,12 +103,12 @@ if $0 == __FILE__
 
     specify "defaults to text" do
       syntaxer = Albino.new(__FILE__)
-      syntaxer.expects(:execute).with('pygmentize -f html -l text').returns(true)
+      syntaxer.expects(:execute).with('pygmentize -l text -f html -O encoding=utf-8').returns(true)
       syntaxer.colorize
     end
 
     specify "accepts options" do
-      @syntaxer.expects(:execute).with('pygmentize -f html -l ruby').returns(true)
+      @syntaxer.expects(:execute).with('pygmentize -l ruby -f html -O encoding=utf-8').returns(true)
       @syntaxer.colorize
     end
 
