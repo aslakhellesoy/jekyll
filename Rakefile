@@ -21,6 +21,12 @@ begin
     s.add_dependency('maruku', '>= 0.5.9')
     s.add_dependency('directory_watcher', '>= 1.1.1')
     s.add_dependency('open4', '>= 0.9.6')
+    s.add_development_dependency('redgreen', '>= 1.2.2')
+    s.add_development_dependency('shoulda', '>= 2.10.2')
+    s.add_development_dependency('rr', '>= 0.10.4')
+    s.add_development_dependency('open4', '>= 1.0.1')
+    s.add_development_dependency('test-spec', '>= 0.10.0')
+    s.add_development_dependency('mocha', '>= 0.9.8')
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install jeweler --version '>= 0.11.0'"
